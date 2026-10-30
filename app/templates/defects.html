@@ -1,0 +1,63 @@
+{% extends "base.html" %}{% block body %}
+<style>
+    .table-custom {
+        color: white !important;
+        background-color: transparent !important;
+    }
+    .table-custom th, .table-custom td {
+        color: white !important;
+        background-color: transparent !important;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
+    }
+    .table-custom tbody tr:hover {
+        background-color: rgba(255, 255, 255, 0.05) !important;
+    }
+</style>
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h3 class="m-0 text-white">All Defects</h3>
+    <a class="btn btn-primary" href="{{ url_for('defects.report_defect') }}">+ Report Defect</a>
+</div>
+
+<div class="card-custom p-0 overflow-hidden">
+    <table class="table table-custom mb-0">
+        <thead>
+            <tr>
+                <th class="ps-4">ID</th>
+                <th>Title</th>
+                <th>Priority</th>
+                <th>Risk Score</th> <!-- THIS IS THE NEW COLUMN -->
+                <th>Status</th>
+                <th>Assignee</th>
+                <th class="text-end pe-4">Action</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for d in defects %}
+            <tr>
+                <td class="ps-4 text-white">#{{ d.id }}</td>
+                <td class="fw-medium text-white">{{ d.title }}</td>
+                <td>
+                    <span class="badge bg-{{ d.priority|lower }}">{{ d.priority }}</span>
+                </td>
+                
+                <!-- THIS SHOWS THE FEATURE 1 SCORE -->
+                <td class="text-warning fw-bold fs-5">{{ d.smart_score }}</td>
+                
+                <td>
+                    <span class="badge bg-{{ d.status|lower|replace(' ', '') }}">{{ d.status }}</span>
+                </td>
+                <td class="text-white">{{ d.assignee.name if d.assignee else '—' }}</td>
+                <td class="text-end pe-4">
+                    <a class="btn btn-sm btn-outline-light" href="{{ url_for('defects.view_defect', defect_id=d.id) }}">View</a>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="7" class="text-center py-4 text-muted">No defects reported yet.</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

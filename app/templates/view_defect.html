@@ -1,0 +1,39 @@
+{% extends "base.html" %}{% block body %}
+<h3>#{{ d.id }} — {{ d.title }}</h3>
+<p><strong>Status:</strong> {{ d.status }} | <strong>Priority:</strong> {{ d.priority }}
+   | <strong>Reporter:</strong> {{ d.reporter.name }}
+   | <strong>Assignee:</strong> {{ d.assignee.name if d.assignee else '—' }}</p>
+<p>{{ d.description }}</p>
+
+{% if current_user.role in ('leader','admin') and d.status == 'Open' %}
+<form method="post" action="{{ url_for('defects.assign_defect', defect_id=d.id) }}" class="mb-3">
+  <label>Assign to</label>
+  <select name="assignee_id" class="form-select" style="max-width:300px;display:inline-block;">
+    {% for dev in developers %}<option value="{{ dev.id }}">{{ dev.name }}</option>{% endfor %}
+  </select>
+  <button class="btn btn-sm btn-primary">Assign</button>
+</form>
+{% endif %}
+
+<form method="post" action="{{ url_for('defects.change_status', defect_id=d.id) }}" class="mb-3">
+  <label>Change status</label>
+  <select name="status" class="form-select" style="max-width:200px;display:inline-block;">
+    {% for s in ["Assigned","In Progress","Resolved","Verified","Closed"] %}
+      <option>{{ s }}</option>
+    {% endfor %}
+  </select>
+  <button class="btn btn-sm btn-secondary">Update</button>
+</form>
+
+<h5>Comments</h5>
+{% for c in comments %}
+  <div class="border rounded p-2 mb-2"><strong>{{ c.body }}</strong></div>
+{% endfor %}
+<form method="post" action="{{ url_for('defects.add_comment', defect_id=d.id) }}" class="mb-4">
+  <textarea class="form-control mb-2" name="body" rows="2" placeholder="Add a comment..."></textarea>
+  <button class="btn btn-sm btn-outline-primary">Comment</button>
+</form>
+
+<h5>Status History</h5>
+<ul>{% for h in history %}<li>{{ h.old_status }} → {{ h.new_status }}</li>{% endfor %}</ul>
+{% endblock %}

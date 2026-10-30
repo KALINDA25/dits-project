@@ -1,0 +1,181 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>DITS | Defect Tracker</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-dark: #0f172a;
+            --bg-card: #1e293b;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --accent: #3b82f6;
+        }
+        
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            font-family: 'Inter', sans-serif;
+            min-height: 100vh;
+        }
+
+        /* Top Navbar */
+        .navbar-custom {
+            background-color: rgba(30, 41, 59, 0.8);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 15px 0;
+        }
+
+        .navbar-brand {
+            font-weight: 700;
+            letter-spacing: 1px;
+            color: #fff !important;
+            font-size: 1.4rem;
+        }
+
+        .nav-link {
+            color: var(--text-muted) !important;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+
+        .nav-link:hover {
+            color: #fff !important;
+        }
+
+        /* Cards / Containers */
+        .card-custom {
+            background: var(--bg-card);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            padding: 24px;
+            margin-bottom: 24px;
+        }
+
+        /* Tables */
+        .table {
+            color: var(--text-main);
+            margin-bottom: 0;
+        }
+        .table thead th {
+            border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+            color: var(--text-muted);
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.8rem;
+            letter-spacing: 0.5px;
+        }
+        .table td {
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            vertical-align: middle;
+            color: #e2e8f0;
+        }
+        .table-hover tbody tr:hover {
+            color: white;
+            background-color: rgba(255,255,255,0.02);
+        }
+
+        /* Inputs & Forms */
+        .form-control, .form-select {
+            background-color: rgba(15, 23, 42, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: white;
+            border-radius: 8px;
+        }
+        .form-control:focus, .form-select:focus {
+            background-color: rgba(15, 23, 42, 0.9);
+            color: white;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.25);
+        }
+        label {
+            color: var(--text-muted);
+            font-weight: 500;
+            font-size: 0.9rem;
+            margin-bottom: 5px;
+        }
+
+        /* Buttons */
+        .btn-primary {
+            background-color: var(--accent);
+            border-color: var(--accent);
+            font-weight: 500;
+            border-radius: 8px;
+            padding: 8px 16px;
+        }
+        .btn-primary:hover {
+            background-color: #2563eb;
+            border-color: #2563eb;
+        }
+        
+        .btn-outline-light {
+            border-color: rgba(255,255,255,0.2);
+            color: var(--text-main);
+        }
+        .btn-outline-light:hover {
+            background-color: rgba(255,255,255,0.1);
+        }
+
+        /* Badges for Status and Priority */
+        .badge {
+            padding: 6px 10px;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 0.75rem;
+            letter-spacing: 0.5px;
+        }
+        .bg-open { background-color: #3b82f6; color: white; }
+        .bg-assigned { background-color: #8b5cf6; color: white; }
+        .bg-inprogress { background-color: #f59e0b; color: white; }
+        .bg-resolved { background-color: #10b981; color: white; }
+        .bg-verified { background-color: #06b6d4; color: white; }
+        .bg-closed { background-color: #64748b; color: white; }
+        
+        .bg-critical { background-color: #ef4444; color: white; }
+        .bg-high { background-color: #f97316; color: white; }
+        .bg-medium { background-color: #eab308; color: black; }
+        .bg-low { background-color: #14b8a6; color: white; }
+
+        /* Alerts */
+        .alert-success { background-color: rgba(16, 185, 129, 0.2); border: 1px solid rgba(16, 185, 129, 0.3); color: #6ee7b7; }
+        .alert-danger { background-color: rgba(239, 68, 68, 0.2); border: 1px solid rgba(239, 68, 68, 0.3); color: #fca5a5; }
+    </style>
+</head>
+<body>
+
+<nav class="navbar navbar-expand navbar-custom mb-4">
+    <div class="container">
+        <a class="navbar-brand" href="{{ url_for('dashboard.dashboard') }}">DITS</a>
+        <div class="navbar-nav ms-auto align-items-center">
+            <a class="nav-link me-3" href="{{ url_for('defects.my_workspace') }}">My Workspace</a>
+            {% if current_user.is_authenticated %}
+                <span class="nav-link me-3">
+                    <span class="text-white">{{ current_user.name }}</span> 
+                    <span class="badge bg-secondary ms-1">{{ current_user.role }}</span>
+                </span>
+                <a class="btn btn-sm btn-outline-light" href="{{ url_for('auth.logout') }}">Logout</a>
+            {% endif %}
+        </div>
+    </div>
+</nav>
+
+<div class="container pb-5">
+    {% with msgs = get_flashed_messages(with_categories=true) %}
+        {% for cat, m in msgs %}
+            <div class="alert alert-{{ 'danger' if cat=='error' else 'success' }} alert-dismissible fade show" role="alert">
+                {{ m }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        {% endfor %}
+    {% endwith %}
+    
+    {% block body %}{% endblock %}
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

@@ -1,0 +1,17 @@
+{% extends "base.html" %}{% block body %}
+<h3>Dashboard</h3>
+<p>Total defects: <strong>{{ total }}</strong></p>
+<div class="row">
+  <div class="col-md-6"><h5>By Status</h5>
+    <table class="table table-sm">
+      {% for k, v in by_status.items() %}<tr><td>{{ k }}</td><td>{{ v }}</td></tr>{% endfor %}
+    </table>
+  </div>
+  <div class="col-md-6"><h5>By Priority</h5>
+    <table class="table table-sm">
+      {% for k, v in by_priority.items() %}<tr><td>{{ k }}</td><td>{{ v }}</td></tr>{% endfor %}
+    </table>
+  </div>
+</div>
+<a class="btn btn-outline-primary" href="{{ url_for('defects.list_defects') }}">View all defects</a>
+{% endblock %}
